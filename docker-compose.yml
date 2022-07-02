@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  microService:
+    image: topic:1.0
+    container_name: topic
+    ports:
+      - "8080:8080"
+    volumes:
+      - /usr/local/docker/topic/tomcat:/usr/local/tomcat/webapps
+    networks:
+      - topic_net
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+    container_name: mysql
+    ports:
+      - "3307:3307"
+    volumes:
+      - /usr/local/docker/topic/mysql/db:/var/lib/mysql
+      - /usr/local/docker/topic/mysql/conf/my.cnf:/etc/my.cnf
+      - /usr/local/docker/topic/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - topic_net
+    command: --default-authentication-plugin=mysql_native_password #解决外部无法访问
+
+networks:
+  topic_net:
+

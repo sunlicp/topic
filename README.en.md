@@ -1,7 +1,7 @@
 # topic
 
 #### Description
-算法海洋（在线刷题项目）。topic项目是一套在线刷题系统，是一个前后端分离的项目。前端采用VUE+elementUI实现，后端则采用SSM实现，部署则采用的是Docker容器化。主要功能有查看文章，发表文章，收藏文章等等。
+算法海洋（刷题）
 
 #### Software Architecture
 Software architecture description

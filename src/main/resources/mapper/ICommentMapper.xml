@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.slcp.mapper.ICommentMapper">
+
+    <resultMap id="queryForListMap" type="com.slcp.dto.CommentDTO">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="VARCHAR"/>
+        <result column="target_id" property="targetId" jdbcType="BIGINT"/>
+        <result column="father_id" property="fatherId" jdbcType="BIGINT"/>
+        <association property="commentUser" javaType="com.slcp.dto.CommentUserDTO"
+                     select="getComUserByName" column="username"/>
+        <association property="targetUser" javaType="com.slcp.dto.CommentUserDTO"
+                     select="getComUserById" column="target_id"/>
+        <collection property="childrenList" javaType="java.util.List" ofType="com.slcp.dto.CommentDTO"
+                    select="getSubComList" column="{id=id,title=title}">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="content" property="content" jdbcType="VARCHAR"/>
+            <result column="title" property="title" jdbcType="VARCHAR"/>
+            <result column="username" property="username" jdbcType="VARCHAR"/>
+            <result column="create_date" property="createDate" jdbcType="VARCHAR"/>
+            <result column="target_id" property="targetId" jdbcType="BIGINT"/>
+            <result column="father_id" property="fatherId" jdbcType="BIGINT"/>
+            <association property="commentUser" javaType="com.slcp.dto.CommentUserDTO"
+                         select="getComUserByName" column="username"/>
+            <association property="targetUser" javaType="com.slcp.dto.CommentUserDTO"
+                         select="getComUserById" column="target_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="getCommentList" resultMap="queryForListMap">
+        select id, content, create_date createDate, target_id targetId, username,title
+        from comment
+        where father_id is null
+          and title = #{title}
+    </select>
+
+    <select id="getComUserByName" resultType="com.slcp.dto.CommentUserDTO">
+        select id, username nickName, picture avatar
+        from user
+        where username = #{username}
+    </select>
+
+    <select id="getComUserById" resultType="com.slcp.dto.CommentUserDTO">
+        select id, username nickName, picture avatar
+        from user
+        where id = #{targetId}
+    </select>
+
+    <select id="getSubComList" resultType="com.slcp.dto.CommentDTO">
+        select id, content, create_date createDate, target_id targetId, username
+        from comment
+        where father_id = #{id}
+          and title = #{title}
+    </select>
+
+</mapper>
